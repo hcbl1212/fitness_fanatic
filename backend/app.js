@@ -6,9 +6,7 @@
 	var app = express();
 	var port = process.env.Port || 3000;
 	var users = require('./routes/user');
-	//creates one connection pool for entire app
-	require('./public/query_methods').create_mysql_pool_connection();
-
+	var initiate_connection_pool = require('./public/query_methods');
 	//used to log request to console
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
@@ -20,8 +18,8 @@
 		next();
 	});
 
-	app.use('/user',users);
-
+	app.use('/users',users);
+	initiate_connection_pool.instantiate_application_connection_pool();
 	app.listen(port,function(){
 		console.log("on port " + port);
 	});
