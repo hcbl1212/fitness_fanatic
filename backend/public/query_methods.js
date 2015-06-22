@@ -32,10 +32,6 @@
 						the_callback(err);
 					}
 				});
-				connection.on("error",function(error){
-					//figure out how to send back to request
-					console.log({"code": 100, "status": error});
-				});
 			});
 		};	
 	//can return a connection from the connection pool

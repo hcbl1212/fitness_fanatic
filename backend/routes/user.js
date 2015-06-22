@@ -2,12 +2,10 @@
 	var express = require('express');
 	var router = express.Router();
 	var underscore = require('underscore');
-	var bodyParser = require('body-parser');
+	var jwt = require('jsonwebtoken');
 	//database dependencies
-	var mysql = require('mysql');
 	var query_object = require('../public/query_methods');
-
-
+	
 	//root path relative to where this route is mounted
 	router.route('/')
 		.get(function(req,res){//get /users - index
@@ -36,14 +34,16 @@
 		})
 		.post(function(req,res){//post /users - create
 			var User = req.body;
-			var create_message = function(query_rows){
+			//at some point get a secret file on a server but pointless in dev 
+			//so I will hard code it
+			User.authToken = jwt.sign(User,'super_secret_shit');
+			query_object.make_sql_query("insert into User set ? ",User,function(query_rows){
 				if(query_rows.affectedRows > 0){
 					res.send({message:"User Created"});	
 				}else{
 					res.send({error: query_rows.message});
 				}
-			};
-			query_object.make_sql_query("insert into User set ? ",User,create_message);
+			});
 		});
 
 	router.route('/:id')
@@ -76,3 +76,5 @@
 //delete users/:id -delete [x][x]  
 //add server side validation
 //add authentication
+//token in req.token
+//encryption on the password as well when ever dev is done
